@@ -4,7 +4,7 @@
   "sites": [
     {
       "key": "Douban",
-      "name": "公众号（宜优精选）发布",
+      "name": "路飞影视",
       "type": 3,
       "api": "csp_PianDan",
       "searchable": 1,
