@@ -298,7 +298,7 @@
             "auto_install": false,
             "available": true,
             "show": true,
-            "info": "无 Root 沙箱命令行（对齐 Termux / MT 终端思路，不走 proot）。\n「终端」自己输入；「AI对话」说人话让 AI 帮你跑命令（设置→AI大模型）。\n「打开目录」用 MT 打开 termux 安装根目录（bin/lib）。\n不是完整 Ubuntu：不能 apt；要发行版请用列表末尾的 ubuntu（需 Root）。\n网盘放 termux_arm64.zip（或 termux-tools_arm64.zip）。",
+            "info": "无 Root 沙箱命令行（对齐 Termux / MT 终端思路，不走 proot）。\n「终端」自己输入；「AI对话」说人话让 AI 帮你跑命令（设置→AI大模型）。\n「打开目录」用 MT 打开 termux 安装根目录（bin/lib）。\n不是完整 Ubuntu：不能 apt；要发行版请用列表末尾的 ubuntu（完整 proot）。\n网盘放 termux_arm64.zip（或 termux-tools_arm64.zip）。",
             "binary_path": "bin/bash",
             "mkdir": [
                 "data",
@@ -971,136 +971,6 @@
                     },
                     "mirrors": {
                         "本地9978": "http://127.0.0.1:9978/file/VodPlus/EnvFiles/二进制/drpy-node.zip"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "lab-ai",
-            "group": "tools",
-            "version": "1.1.2",
-            "icon": "https://jk.catvod.site/jk/assets/binmarket_lab-ai.jpg?v=20260723c",
-            "auto_install": false,
-            "available": true,
-            "show": true,
-            "info": "环境市场 AI 助手（DeepSeek）。\n依赖：先装 nodejs（未装会在启动时明确提示）；写源/跑 Spider 需再装 python；建议 php/curl。\n设置：环境市场「设置 → AI大模型」填 Key。\n对话：http://127.0.0.1:18765/  · 快捷「AI写源」可写 TVBox Python Spider。\nv1.1.1：开思考模式展示 reasoning；fetch 失败会保留过程步骤。\nv1.1：写源时实时显示「执行过程」——模型思考、工具参数、返回摘要、验收分数，历史可回看。\n写源目录：VodPlus/AI/spiders（自动验收 home→player）。\n临时脚本：VodPlus/AI/tmp · 对话记录：VodPlus/AI/chats\n对话中可点「停止」中断当前任务（1.1.2）。",
-            "var_path": {
-                "PATH": "../nodejs/bin",
-                "LD_LIBRARY_PATH": "../nodejs/lib",
-                "OPENSSL_CONF": "/dev/null",
-                "NODE_PATH": "../nodejs/lib/node_modules"
-            },
-            "mkdir": [
-                "data",
-                "logs"
-            ],
-            "commands": [
-                {
-                    "id": "ai_start",
-                    "name": "启动 AI",
-                    "description": "后台启动对话服务；绑定 0.0.0.0；日志 data/logs/boot.log",
-                    "command": "mkdir -p \"{dataPath}/logs\" \"/storage/emulated/0/VodPlus/AI/tmp\" \"/storage/emulated/0/VodPlus/AI/products\" \"/storage/emulated/0/VodPlus/AI/chats\" \"/storage/emulated/0/VodPlus/EnvFiles/config\"; cd \"{envRootPath}\" || exit 1; NODE=\"\"; NODE=$(command -v node 2>/dev/null); if [ -z \"$NODE\" ] || [ ! -f \"$NODE\" ]; then for c in \"{envRootPath}/../nodejs/bin/node\" \"{envRootPath}/../nodejs/node\"; do if [ -f \"$c\" ]; then NODE=\"$c\"; break; fi; done; fi; if [ -z \"$NODE\" ] || [ ! -f \"$NODE\" ]; then mkdir -p \"{dataPath}/logs\" \"/storage/emulated/0/VodPlus/EnvFiles/config\"; DIAG=\"/storage/emulated/0/VodPlus/EnvFiles/config/node_missing_diag.txt\"; { echo \"[fail] 未找到 node 可执行文件（lab/nodejs/bin/node）\"; echo \"请强制重装「nodejs」后再启动。\"; echo \"envRoot={envRootPath}\"; echo \"PATH=$PATH\"; echo \"==== ls ../nodejs ====\"; ls -la \"{envRootPath}/../nodejs\" 2>&1; echo \"==== ls ../nodejs/bin ====\"; ls -la \"{envRootPath}/../nodejs/bin\" 2>&1; echo \"==== command -v node ====\"; command -v node 2>&1; } > \"{dataPath}/logs/boot.log\"; cp \"{dataPath}/logs/boot.log\" \"$DIAG\" 2>/dev/null; exit 1; fi; LOGF=\"{dataPath}/logs/boot.log\"; PIDF=\"{dataPath}/logs/ai.pid\"; PORT=\"{port}\"; echo \"[boot] $(date)\" > \"$LOGF\"; echo \"[boot] NODE=$NODE PORT=$PORT\" >> \"$LOGF\"; \"$NODE\" -v >> \"$LOGF\" 2>&1; if command -v curl >/dev/null 2>&1; then CODE=$(curl -s -o /dev/null -w \"%{http_code}\" --connect-timeout 2 \"http://127.0.0.1:$PORT/api/health\" 2>/dev/null); if [ -n \"$CODE\" ] && [ \"$CODE\" != \"000\" ]; then echo \"[boot] already running http=$CODE port=$PORT\" >> \"$LOGF\"; echo \"$PORT\" > \"{dataPath}/logs/ai.port\"; printf \"http://127.0.0.1:%s/\\n\" \"$PORT\" > \"{dataPath}/logs/local_home.txt\"; echo \"[boot] ok\" >> \"$LOGF\"; exit 0; fi; fi; if [ -f \"$PIDF\" ]; then kill \"$(cat \"$PIDF\")\" 2>/dev/null; kill -9 \"$(cat \"$PIDF\")\" 2>/dev/null; rm -f \"$PIDF\"; fi; for p in $(ps -A -o PID= -o ARGS= 2>/dev/null | awk '/\\/node/ && /lab-ai\\/(bin\\/start\\.mjs|server\\.mjs)/ {print $1}'); do echo \"[boot] kill old pid=$p\" >> \"$LOGF\"; kill \"$p\" 2>/dev/null; kill -9 \"$p\" 2>/dev/null; done; sleep 1; export LD_LIBRARY_PATH=\"{envRootPath}/../nodejs/lib:${LD_LIBRARY_PATH}\"; ENTRY=\"./bin/start.mjs\"; if [ ! -f \"$ENTRY\" ]; then ENTRY=\"./server.mjs\"; fi; CATVOD_ANDROID=1 NODE_ENV=production PORT=$PORT HOST=0.0.0.0 LAB_ROOT=\"$(cd \"{envRootPath}/..\" && pwd)\" AI_CONFIG=\"/storage/emulated/0/VodPlus/EnvFiles/config/ai.json\" VODPLUS_ROOT=\"/storage/emulated/0/VodPlus\" nohup \"$NODE\" \"$ENTRY\" >> \"$LOGF\" 2>&1 & echo $! > \"$PIDF\"; echo \"$PORT\" > \"{dataPath}/logs/ai.port\"; printf \"http://127.0.0.1:%s/\\n\" \"$PORT\" > \"{dataPath}/logs/local_home.txt\"; echo \"[boot] started pid=$(cat \"$PIDF\")\" >> \"$LOGF\"; sleep 2; if kill -0 \"$(cat \"$PIDF\")\" 2>/dev/null; then echo \"[boot] ok\" >> \"$LOGF\"; exit 0; fi; if command -v curl >/dev/null 2>&1; then CODE=$(curl -s -o /dev/null -w \"%{http_code}\" --connect-timeout 2 \"http://127.0.0.1:$PORT/api/health\" 2>/dev/null); if [ -n \"$CODE\" ] && [ \"$CODE\" != \"000\" ]; then echo \"[boot] ok via health http=$CODE\" >> \"$LOGF\"; exit 0; fi; fi; echo \"[boot] process exited\" >> \"$LOGF\"; exit 1",
-                    "auto_execute": false,
-                    "background": true,
-                    "show_output": false,
-                    "variables": [
-                        {
-                            "key": "port",
-                            "name": "端口",
-                            "type": "number",
-                            "default": "18765",
-                            "hint": "对话服务端口，默认 18765",
-                            "required": true,
-                            "min": 1024,
-                            "max": 65535
-                        }
-                    ],
-                    "clicks": [
-                        {
-                            "title": "打开对话（全屏）",
-                            "action": "webview_full",
-                            "value": "http://127.0.0.1:{port}/"
-                        },
-                        {
-                            "title": "系统浏览器打开",
-                            "action": "open",
-                            "value": "http://127.0.0.1:{port}/"
-                        },
-                        {
-                            "title": "申请 DeepSeek Key",
-                            "action": "webview",
-                            "style": "dialog",
-                            "value": "https://platform.deepseek.com/usage"
-                        },
-                        {
-                            "title": "使用说明",
-                            "action": "alert",
-                            "value": "1. 先装 nodejs，建议再装 python/php/curl\n2. 设置→AI大模型 填 Key（默认 flash，可切 pro）\n3. 点启动 AI，再打开对话\n4. 临时脚本在 VodPlus/AI/tmp，预览 http://IP:18765/files/...\n5. 成品可归档到 EnvFiles/Proxy 等"
-                        }
-                    ]
-                },
-                {
-                    "id": "ai_lan",
-                    "name": "查看局域网地址",
-                    "description": "生成局域网对话与 AI/tmp 预览根地址",
-                    "command": "mkdir -p \"{dataPath}/logs\"; PORT=18765; if [ -f \"{dataPath}/logs/ai.port\" ]; then PORT=$(cat \"{dataPath}/logs/ai.port\" | tr -d \" \\n\\r\"); fi; [ -z \"$PORT\" ] && PORT=18765; IP=\"{lanIp}\"; echo \"==== lab-ai LAN ====\"; echo \"port: $PORT\"; if [ -n \"$IP\" ]; then echo \"chat: http://$IP:$PORT/\"; echo \"files: http://$IP:$PORT/files/tmp/\"; printf \"http://%s:%s/\\n\" \"$IP\" \"$PORT\" > \"{dataPath}/logs/lan_home.txt\"; else echo \"no lan ip\"; fi",
-                    "auto_execute": false,
-                    "show_output": true,
-                    "clicks": [
-                        {
-                            "title": "复制局域网对话地址",
-                            "action": "copy_file",
-                            "value": "{dataPath}/logs/lan_home.txt"
-                        },
-                        {
-                            "title": "打开本机对话",
-                            "action": "webview_full_file",
-                            "value": "{dataPath}/logs/local_home.txt"
-                        }
-                    ]
-                },
-                {
-                    "id": "ai_log",
-                    "name": "查看启动日志",
-                    "description": "显示 boot.log",
-                    "command": "echo \"==== boot.log ====\"; tail -n 160 \"{dataPath}/logs/boot.log\" 2>/dev/null || echo \"(尚无日志)\"; echo; ls -la \"{envRootPath}/bin/start.mjs\" \"{envRootPath}/server.mjs\" 2>/dev/null",
-                    "auto_execute": false,
-                    "show_output": true
-                },
-                {
-                    "id": "ai_open",
-                    "name": "打开对话",
-                    "description": "全屏打开对话页（不重启）",
-                    "command": "echo open",
-                    "auto_execute": false,
-                    "show_output": false,
-                    "clicks": [
-                        {
-                            "title": "打开对话",
-                            "action": "webview_full",
-                            "value": "http://127.0.0.1:18765/"
-                        }
-                    ]
-                },
-                {
-                    "id": "ai_stop",
-                    "name": "停止 AI",
-                    "description": "结束 lab-ai 进程",
-                    "command": "PIDF=\"{dataPath}/logs/ai.pid\"; if [ -f \"$PIDF\" ]; then kill \"$(cat \"$PIDF\")\" 2>/dev/null; kill -9 \"$(cat \"$PIDF\")\" 2>/dev/null; rm -f \"$PIDF\"; fi; for p in $(ps -A -o PID= -o ARGS= 2>/dev/null | awk '/\\/node/ && /lab-ai\\/(bin\\/start\\.mjs|server\\.mjs)/ {print $1}'); do kill \"$p\" 2>/dev/null; kill -9 \"$p\" 2>/dev/null; done; echo stopped",
-                    "auto_execute": false,
-                    "show_output": true
-                }
-            ],
-            "downloads": [
-                {
-                    "arch": "arm64-v8a",
-                    "url": "http://127.0.0.1:9978/file/VodPlus/EnvFiles/二进制/lab-ai.zip",
-                    "size": "约 13 KB",
-                    "pan": {
-                        "match": "lab-ai.zip"
-                    },
-                    "mirrors": {
-                        "本地9978": "http://127.0.0.1:9978/file/VodPlus/EnvFiles/二进制/lab-ai.zip"
                     }
                 }
             ]
@@ -1856,41 +1726,25 @@
             "name": "proot",
             "group": "runtime",
             "title": "PROOT",
-            "version": "5.3",
+            "version": "5.3-online",
             "icon": "https://jk.catvod.site/jk/assets/binmarket_proot.jpg?v=20260805t",
             "auto_install": false,
             "available": true,
-            "show": true,
-            "info": "PRoot 5.3：供 ubuntu 使用（支持 Ubuntu 24 的 ls -l / statx）。\n【重要】ubuntu 终端需 Magisk Root；无 Root 设备装了也跑不起来。\n把 proot-arm64.zip（内含 bin/proot）放到环境网盘总分享。\n装完点「自检」。装 ubuntu 前必须先装本包。",
+            "show": false,
+            "builtin_jar": true,
+            "info": "Termux 系完整 PRoot 走线上包（对齐 Go pvideo）：首次用时按 ABI 从 jk/lab 下载 zip，解压到 lab/proot/bin。\n含 proot + loader + loader32（arm64）+ libtalloc.so.2 + libandroid-shmem.so。\n装 ubuntu 或开终端时自动准备，无需再下网盘包。\n点「自检」可确认已就绪。",
             "binary_path": "bin/proot",
             "commands": [
                 {
                     "id": "self_test",
-                    "name": "✅ 自检（能否调用）",
-                    "description": "检测 proot 版本与能否执行",
-                    "command": "echo \"==== proot 自检 ====\"; echo \"which: $(command -v proot 2>/dev/null || echo 未找到)\"; echo \"---- version ----\"; proot -V 2>&1 | head -n 8; echo \"---- help ----\"; proot -h 2>&1 | head -n 12; EC=$?; echo \"exit=$EC\"; if [ \"$EC\" = \"0\" ] || [ \"$EC\" = \"1\" ]; then echo \"✅ proot 可调用（Ubuntu 24 请确认版本含 5.3）\"; else echo \"❌ proot 调用失败，请重装\"; fi",
+                    "name": "✅ 自检（完整运行时）",
+                    "description": "按需下载（如需）并检测 proot / loader / .so",
+                    "command": "echo \"==== proot 完整运行时自检（在线包） ====\"; PDIR=\"{envRootPath}/bin\"; echo \"dir=$PDIR\"; ls -la \"$PDIR\" 2>&1 | head -n 30; echo \"----\"; for f in proot loader libtalloc.so.2 libandroid-shmem.so; do if [ -f \"$PDIR/$f\" ]; then echo \"OK $f\"; else echo \"MISS $f\"; fi; done; [ -f \"$PDIR/loader32\" ] && echo \"OK loader32\" || echo \"(loader32 可选)\"; echo \"----\"; export PROOT_LOADER=\"$PDIR/loader\"; export PROOT_LOADER_32=\"$PDIR/loader32\"; export LD_LIBRARY_PATH=\"$PDIR:${LD_LIBRARY_PATH}\"; export PROOT_NO_SECCOMP=1; echo \"PROOT_LOADER=$PROOT_LOADER\"; \"$PDIR/proot\" -V 2>&1 | head -n 8; EC=$?; echo \"exit=$EC\"; if [ ! -x \"$PDIR/loader\" ]; then echo \"❌ 缺 loader，请检查网络后重试\"; elif [ \"$EC\" = \"0\" ] || [ \"$EC\" = \"1\" ]; then echo \"✅ proot 可调用\"; else echo \"❌ proot 调用失败\"; fi",
                     "auto_execute": false,
                     "show_output": true
                 }
             ],
-            "downloads": [
-                {
-                    "arch": "arm64-v8a",
-                    "url": "http://127.0.0.1:9978/file/VodPlus/EnvFiles/二进制/proot-arm64.zip",
-                    "size": "~1.5 MB",
-                    "pan": {
-                        "match": "proot-arm64.zip"
-                    }
-                },
-                {
-                    "arch": "armeabi-v7a",
-                    "url": "http://127.0.0.1:9978/file/VodPlus/EnvFiles/二进制/proot-arm32.zip",
-                    "size": "~1.2 MB",
-                    "pan": {
-                        "match": "proot-arm32.zip"
-                    }
-                }
-            ]
+            "downloads": []
         },
         {
             "name": "ubuntu",
@@ -1901,20 +1755,21 @@
             "auto_install": false,
             "available": true,
             "show": true,
-            "info": "Ubuntu Base（官方约 29MB rootfs）+ proot。\n【重要】需要 Magisk/Root：普通 App 权限下系统会拦 proot（exit=255），无 Root 手机/盒子目前用不了本环境。\n无 Root 只要 bash/curl/ssh 等命令行：请装同组「termux」（不走 proot）。\n依赖：先装 proot 5.3+。\n「终端」自己输命令；「AI对话」说人话（设置→AI大模型）；「Ubuntu目录」用 MT 打开 rootfs。\n不是完整桌面；装软件后体积会变大。",
+            "info": "Ubuntu Base（官方约 29MB rootfs）+ jar 内置 Termux 完整 proot。\n装本包时自动释放 proot（含 loader），App 沙箱直跑，对齐默影视实验室。\n菜单可一键 apt 装 PHP / Python3 / Node.js（共用同一份 rootfs，比默影视分四个包更省空间）。\n无完整发行版需求时可用同组「termux」（不走 proot）。\n「终端」自己输命令；「AI对话」说人话（设置→AI大模型）；「Ubuntu目录」用 MT 打开 rootfs。\n不是完整桌面；装软件后体积会变大。",
             "binary_path": "bin/ubuntu",
             "mkdir": [
                 "data",
                 "data/logs"
             ],
             "var_path": {
-                "PATH": "bin:../proot/bin"
+                "PATH": "bin:../proot/bin",
+                "LD_LIBRARY_PATH": "../proot/bin"
             },
             "commands": [
                 {
                     "id": "ubuntu_terminal",
                     "name": "💻 终端",
-                    "description": "打开终端：输入命令回车执行，可连续操作",
+                    "description": "打开终端：输入命令回车执行",
                     "command": "true",
                     "auto_execute": false,
                     "show_output": false
@@ -1928,9 +1783,41 @@
                     "show_output": false
                 },
                 {
+                    "id": "apt_update",
+                    "name": "🔄 更新软件源",
+                    "description": "apt-get update（装软件前建议先跑）",
+                    "command": "true",
+                    "auto_execute": false,
+                    "show_output": false
+                },
+                {
+                    "id": "install_php",
+                    "name": "📦 安装 PHP",
+                    "description": "apt 安装 php-cli / php-curl / php-mbstring / php-xml（需联网）",
+                    "command": "true",
+                    "auto_execute": false,
+                    "show_output": false
+                },
+                {
+                    "id": "install_python3",
+                    "name": "📦 安装 Python3",
+                    "description": "apt 安装 python3 / python3-pip / python3-venv（需联网）",
+                    "command": "true",
+                    "auto_execute": false,
+                    "show_output": false
+                },
+                {
+                    "id": "install_nodejs",
+                    "name": "📦 安装 Node.js",
+                    "description": "apt 安装 nodejs / npm（需联网；Ubuntu 源版本可能偏旧）",
+                    "command": "true",
+                    "auto_execute": false,
+                    "show_output": false
+                },
+                {
                     "id": "self_test",
                     "name": "✅ 自检",
-                    "description": "uname + os-release，确认 proot/rootfs 正常（走 Root 终端通道）",
+                    "description": "uname + os-release，确认 proot/rootfs 正常（直跑）",
                     "command": "true",
                     "auto_execute": false,
                     "show_output": true
@@ -1967,5 +1854,6 @@
                 }
             ]
         }
-    ]
+    ],
+    "packages": []
 }

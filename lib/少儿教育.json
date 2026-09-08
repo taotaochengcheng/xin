@@ -34,7 +34,7 @@
         <div class="text-center space-y-2 border-b border-slate-700/60 pb-5">
             <div class="inline-block p-3 bg-slate-700/40 rounded-2xl text-4xl shadow-inner border border-slate-600/40">🦋</div>
             <h1 class="text-2xl sm:text-3xl font-extrabold tracking-wide text-white" id="header_title">蝴蝶影视 · 专属矩阵订阅导航</h1>
-            <p class="text-xs text-slate-400 font-mono">Core V3.3.1 | Build: 2026-08-23 10:14:26</p>
+            <p class="text-xs text-slate-400 font-mono">Core V3.3.1 | Build: 2026-09-08 01:58:20</p>
             
             <div class="flex items-center justify-center gap-2 mt-1">
                 <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900/60 border border-slate-700/60 text-[11px] text-slate-300">
@@ -57,11 +57,11 @@
         <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2.5 text-center">
             <div class="bg-slate-900/60 p-2.5 rounded-2xl border border-slate-700/50">
                 <div class="text-[10px] text-slate-400">点播线路</div>
-                <div class="text-base font-bold text-emerald-400 mt-0.5"><span id="count_sites" data-target="506">0</span> <span class="text-[10px] font-normal">个</span></div>
+                <div class="text-base font-bold text-emerald-400 mt-0.5"><span id="count_sites" data-target="594">0</span> <span class="text-[10px] font-normal">个</span></div>
             </div>
             <div class="bg-slate-900/60 p-2.5 rounded-2xl border border-slate-700/50">
                 <div class="text-[10px] text-slate-400">直播源站</div>
-                <div class="text-base font-bold text-cyan-400 mt-0.5"><span id="count_lives" data-target="58">0</span> <span class="text-[10px] font-normal">个</span></div>
+                <div class="text-base font-bold text-cyan-400 mt-0.5"><span id="count_lives" data-target="57">0</span> <span class="text-[10px] font-normal">个</span></div>
             </div>
             <div class="bg-slate-900/60 p-2.5 rounded-2xl border border-slate-700/50">
                 <div class="text-[10px] text-slate-400">解析接口</div>
@@ -70,9 +70,9 @@
             <div class="bg-slate-900/60 p-2.5 rounded-2xl border border-slate-700/50">
                 <div class="text-[10px] text-slate-400">当前密锁</div>
                 <div class="text-xs font-bold text-amber-400 cursor-pointer select-none transition mt-1"
-                     onclick="if(this.dataset.revealed==='true'){this.innerText='🔒 *** 点击显示'; this.dataset.revealed='false';}else{this.innerText='mh5'; this.dataset.revealed='true';}"
+                     onclick="alert('⚠️ 请前往 Telegram 频道获取。');"
                      title="点击显示/隐藏">
-                    🔒 *** 点击显示
+                    🔒 加群获取
                 </div>
             </div>
             <div class="bg-slate-900/60 p-2.5 rounded-2xl border border-slate-700/50">
@@ -121,8 +121,8 @@
                         <p class="text-xs font-mono text-slate-400 truncate select-all">••••••••••••••••••••••••</p>
                     </div>
                     <div class="flex items-center gap-2 flex-shrink-0">
-                        <a href="/蝴蝶影视纯净版mh5.json" target='_blank' class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-medium border border-slate-600/60 transition">预览</a>
-                        <button onclick="copyUrl('https://hd.lytvs.top/蝴蝶影视纯净版mh5.json', false)" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold shadow-lg shadow-emerald-600/20 transition flex items-center gap-1"><i class="fa-regular fa-copy"></i>复制链接</button>
+                        <a href="javascript:openTgBotModal()"  class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-medium border border-slate-600/60 transition">预览</a>
+                        <button onclick="openTgBotModal()" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold shadow-lg shadow-emerald-600/20 transition flex items-center gap-1"><i class="fa-regular fa-copy"></i>复制链接</button>
                     </div>
                 </div>
                 
